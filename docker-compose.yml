@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: freezer_tracking
+      POSTGRES_USER: freezer_tracking
+      POSTGRES_PASSWORD: freezer_tracking
+    ports:
+      - "5434:5432"
+    volumes:
+      - freezer-postgres-data:/var/lib/postgresql/data
+
+  api:
+    image: freezer-tracking-api:${API_LOCAL_TAG:-latest}
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file:
+      - .env.api
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/freezer_tracking
+      DATABASE_USERNAME: freezer_tracking
+      DATABASE_PASSWORD: freezer_tracking
+    ports:
+      - "9080:9080"
+    depends_on:
+      - db
+
+  web:
+    image: freezer-tracking-web:${WEB_LOCAL_TAG:-latest}
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    env_file:
+      - .env.web
+    environment:
+      API_BASE_URL: http://api:9080
+      PORT: 10000
+    ports:
+      - "10000:10000"
+    depends_on:
+      - api
+
+volumes:
+  freezer-postgres-data:

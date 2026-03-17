@@ -1,0 +1,1426 @@
+openapi: 3.0.3
+info:
+  title: Freezer Tracking API
+  version: 3.0.0
+  description: API for freezer tracking application.
+servers:
+  - url: http://localhost:8080
+security:
+  - ApiKeyAuth: []
+paths:
+  /login:
+    post:
+      summary: Log in and return an API key
+      security: []
+      description: This endpoint does not require an API key.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "403":
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /logout:
+    post:
+      summary: Log out and invalidate the API key
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "204":
+          description: Logged out.
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /account/password:
+    post:
+      summary: Change the current user's password
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordRequest"
+      responses:
+        "204":
+          description: Password updated.
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /account/house:
+    get:
+      summary: Get the current account's house
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: House details for the current account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountHouse"
+        "400":
+          description: House not set.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: House not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /config:
+    get:
+      summary: List configuration entries
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: A list of configuration entries.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConfigEntry"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a configuration entry
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigCreate"
+      responses:
+        "201":
+          description: Config entry created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigEntry"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /config/{key}:
+    parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get a configuration entry
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Config entry found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigEntry"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Config entry not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Update a configuration entry
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigUpdate"
+      responses:
+        "200":
+          description: Config entry updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigEntry"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Config entry not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Delete a configuration entry
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "204":
+          description: Config entry deleted.
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Config entry not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /accounts:
+    get:
+      summary: List accounts
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: A list of accounts.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create an account
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountCreate"
+      responses:
+        "201":
+          description: Account created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /accounts/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get an account
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Account found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Account not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Update an account
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountUpdate"
+      responses:
+        "200":
+          description: Account updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Account not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Delete an account
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "204":
+          description: Account deleted.
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Account not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /accounts/{id}/api-keys:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: List API key sessions for an account
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: A list of API key sessions.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AccountApiKeySession"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Account not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /accounts/{id}/api-keys/revoke-all:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      summary: Revoke all API key sessions for an account
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "204":
+          description: Sessions revoked.
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Account not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /accounts/{id}/api-keys/revoke:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      summary: Revoke a specific API key session
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RevokeApiKeyRequest"
+      responses:
+        "204":
+          description: Session revoked.
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Account not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /houses:
+    get:
+      summary: List houses
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: A list of houses.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/House"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a house
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HouseCreate"
+      responses:
+        "201":
+          description: House created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/House"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /houses/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get a house
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: House found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/House"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: House not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Update a house
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HouseUpdate"
+      responses:
+        "200":
+          description: House updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/House"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: House not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Delete a house
+      description: Admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "204":
+          description: House deleted.
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: House not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /statistics:
+    get:
+      summary: Get system statistics
+      description: Super-admin only.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: House, freezer, shelf, and item count statistics.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Statistics"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /items:
+    get:
+      summary: List items
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Zero-based page index.
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          description: Page size.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        "200":
+          description: A paged list of items.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemList"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create an item
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemCreate"
+      responses:
+        "201":
+          description: Item created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "400":
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /items/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get an item
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Item found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "404":
+          description: Item not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Replace an item
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemUpdate"
+      responses:
+        "200":
+          description: Item updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "400":
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Item not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Delete an item
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "204":
+          description: Item deleted.
+        "404":
+          description: Item not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /items/next-reference:
+    get:
+      summary: Get the next reference number
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Next reference number formatted to 8 digits.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NextReferenceResponse"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /freezers:
+    get:
+      summary: List freezers
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: A list of freezers.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Freezer"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a freezer
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FreezerCreate"
+      responses:
+        "201":
+          description: Freezer created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Freezer"
+        "400":
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /freezers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+    get:
+      summary: Get a freezer
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Freezer found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Freezer"
+        "404":
+          description: Freezer not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Replace a freezer
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FreezerUpdate"
+      responses:
+        "200":
+          description: Freezer updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Freezer"
+        "400":
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Freezer not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Delete a freezer
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "204":
+          description: Freezer deleted.
+        "404":
+          description: Freezer not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: Database connection is healthy.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "503":
+          description: Database connection is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+  /version:
+    get:
+      summary: API version
+      responses:
+        "200":
+          description: API semantic version.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VersionResponse"
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    Account:
+      type: object
+      required:
+        - id
+        - username
+        - isAdmin
+        - isSuperAdmin
+        - houseId
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+          format: email
+        isAdmin:
+          type: boolean
+        isSuperAdmin:
+          type: boolean
+        houseId:
+          type: string
+          format: uuid
+    AccountApiKeySession:
+      type: object
+      required:
+        - apiKey
+        - clientType
+        - createdAt
+        - expiresAt
+      properties:
+        apiKey:
+          type: string
+          format: uuid
+        clientType:
+          $ref: "#/components/schemas/ApiClientType"
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        lastUsedAt:
+          type: string
+          format: date-time
+          nullable: true
+        revokedAt:
+          type: string
+          format: date-time
+          nullable: true
+        deviceLabel:
+          type: string
+          nullable: true
+    AccountHouse:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    ConfigEntry:
+      type: object
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ConfigCreate:
+      type: object
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ConfigUpdate:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+    AccountCreate:
+      type: object
+      required:
+        - username
+        - password
+        - houseId
+      properties:
+        username:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        isAdmin:
+          type: boolean
+        isSuperAdmin:
+          type: boolean
+        houseId:
+          type: string
+          format: uuid
+    AccountUpdate:
+      type: object
+      required:
+        - username
+        - houseId
+      properties:
+        username:
+          type: string
+          format: email
+        isAdmin:
+          type: boolean
+        isSuperAdmin:
+          type: boolean
+        houseId:
+          type: string
+          format: uuid
+    RevokeApiKeyRequest:
+      type: object
+      required:
+        - apiKey
+      properties:
+        apiKey:
+          type: string
+          format: uuid
+    House:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    HouseCreate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    HouseUpdate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    Statistics:
+      type: object
+      required:
+        - houseCount
+        - houses
+      properties:
+        houseCount:
+          type: integer
+          minimum: 0
+        houses:
+          type: array
+          items:
+            $ref: "#/components/schemas/HouseStatistics"
+    HouseStatistics:
+      type: object
+      required:
+        - houseId
+        - houseName
+        - freezerCount
+        - freezers
+      properties:
+        houseId:
+          type: string
+          format: uuid
+        houseName:
+          type: string
+        freezerCount:
+          type: integer
+          minimum: 0
+        freezers:
+          type: array
+          items:
+            $ref: "#/components/schemas/FreezerStatistics"
+    FreezerStatistics:
+      type: object
+      required:
+        - freezerId
+        - freezerName
+        - shelfCount
+        - shelves
+      properties:
+        freezerId:
+          type: integer
+          minimum: 1
+        freezerName:
+          type: string
+        shelfCount:
+          type: integer
+          minimum: 0
+        shelves:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShelfStatistics"
+    ShelfStatistics:
+      type: object
+      required:
+        - shelfNumber
+        - itemCount
+      properties:
+        shelfNumber:
+          type: integer
+          minimum: 1
+        itemCount:
+          type: integer
+          minimum: 0
+    ChangePasswordRequest:
+      type: object
+      required:
+        - currentPassword
+        - newPassword
+      properties:
+        currentPassword:
+          type: string
+          format: password
+        newPassword:
+          type: string
+          format: password
+    LoginRequest:
+      type: object
+      required:
+        - clientType
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        clientType:
+          $ref: "#/components/schemas/ApiClientType"
+    ApiClientType:
+      type: string
+      enum:
+        - WEB
+        - IOS
+    LoginResponse:
+      type: object
+      required:
+        - apiKey
+        - apiKeyExpiry
+        - isAdmin
+        - isSuperAdmin
+      properties:
+        apiKey:
+          type: string
+          format: uuid
+        apiKeyExpiry:
+          type: string
+          format: date-time
+        isAdmin:
+          type: boolean
+        isSuperAdmin:
+          type: boolean
+    Item:
+      type: object
+      required:
+        - id
+        - reference
+        - freeze_date
+        - best_before
+        - description
+        - freezer_id
+        - freezer_name
+        - shelf_number
+      properties:
+        id:
+          type: string
+          format: uuid
+        reference:
+          type: string
+          pattern: "^[0-9]{8}$"
+          description: 8 digit reference number.
+        freeze_date:
+          type: string
+          format: date
+          description: ISO 8601 date (YYYY-MM-DD).
+        best_before:
+          type: string
+          format: date
+          description: ISO 8601 date (YYYY-MM-DD).
+        description:
+          type: string
+        freezer_id:
+          type: integer
+        freezer_name:
+          type: string
+        shelf_number:
+          type: integer
+          minimum: 1
+        weight:
+          type: string
+          maxLength: 8
+          description: Optional item weight label up to 8 characters.
+        size:
+          type: string
+          enum:
+            - S
+            - M
+            - L
+          description: Optional size indicator (S, M, or L).
+    ItemCreate:
+      type: object
+      required:
+        - reference
+        - freeze_date
+        - best_before
+        - description
+        - freezer_id
+        - shelf_number
+      properties:
+        reference:
+          type: string
+          pattern: "^[0-9]{8}$"
+        freeze_date:
+          type: string
+          format: date
+        best_before:
+          type: string
+          format: date
+        description:
+          type: string
+        freezer_id:
+          type: integer
+        shelf_number:
+          type: integer
+          minimum: 1
+        weight:
+          type: string
+          maxLength: 8
+        size:
+          type: string
+          enum:
+            - S
+            - M
+            - L
+    ItemUpdate:
+      type: object
+      required:
+        - reference
+        - freeze_date
+        - best_before
+        - description
+        - freezer_id
+        - shelf_number
+      properties:
+        reference:
+          type: string
+          pattern: "^[0-9]{8}$"
+        freeze_date:
+          type: string
+          format: date
+        best_before:
+          type: string
+          format: date
+        description:
+          type: string
+        freezer_id:
+          type: integer
+        shelf_number:
+          type: integer
+          minimum: 1
+        weight:
+          type: string
+          maxLength: 8
+        size:
+          type: string
+          enum:
+            - S
+            - M
+            - L
+    ItemList:
+      type: object
+      required:
+        - items
+        - page
+        - size
+        - total_items
+        - total_pages
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Item"
+        page:
+          type: integer
+          minimum: 0
+        size:
+          type: integer
+          minimum: 1
+        total_items:
+          type: integer
+          minimum: 0
+        total_pages:
+          type: integer
+          minimum: 0
+    Freezer:
+      type: object
+      required:
+        - id
+        - name
+        - shelfCount
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        shelfCount:
+          type: integer
+          minimum: 1
+          maximum: 10
+    FreezerCreate:
+      type: object
+      required:
+        - name
+        - shelfCount
+      properties:
+        name:
+          type: string
+        shelfCount:
+          type: integer
+          minimum: 1
+          maximum: 10
+    FreezerUpdate:
+      type: object
+      required:
+        - name
+        - shelfCount
+      properties:
+        name:
+          type: string
+        shelfCount:
+          type: integer
+          minimum: 1
+          maximum: 10
+    ErrorResponse:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+    HealthResponse:
+      type: object
+      required:
+        - databaseOk
+        - version
+      properties:
+        databaseOk:
+          type: boolean
+        version:
+          type: string
+          pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    VersionResponse:
+      type: object
+      required:
+        - version
+      properties:
+        version:
+          type: string
+          pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    NextReferenceResponse:
+      type: object
+      required:
+        - nextReference
+      properties:
+        nextReference:
+          type: string
+          pattern: "^[0-9]{8}$"

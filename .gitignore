@@ -1,0 +1,70 @@
+# OS and editor
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Node
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+.yarn-cache/
+.pnp.*
+
+# Next.js
+.next/
+out/
+
+# Build outputs
+build/
+dist/
+coverage/
+
+# Gradle/Java
+.gradle/
+.gradle-home/
+**/build/
+apps/api/bin/
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+
+# Env files
+.env.local
+.env.*.local
+.env.web
+.env.api
+.aws.env
+
+# Xcode/iOS
+DerivedData/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.ipa
+*.dSYM
+
+# Liquibase
+liquibase.log
+
+# Misc
+.tmp/
+.tmp*/
+
+# Terraform local cache and generated Lambda artefacts
+infra/terraform/.terraform/
+infra/terraform/lambda/*.zip
+infra/terraform/backend.hcl
+infra/terraform/terraform.tfvars
+infra/terraform/**/*.tfstate
+infra/terraform/**/*.tfstate.*
+**/.terraform/

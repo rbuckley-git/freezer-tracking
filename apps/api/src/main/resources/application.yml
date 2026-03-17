@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/freezer_tracking}
+    username: ${DATABASE_USERNAME:freezer_tracking}
+    password: ${DATABASE_PASSWORD:freezer_tracking}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_schema: public
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
+    enabled: true
+server:
+  port: 9080
+security:
+  password-pepper: ${PASSWORD_PEPPER:}
+app:
+  version: "@appVersion@"
+bootstrap:
+  admin:
+    enabled: ${BOOTSTRAP_ADMIN_ENABLED:false}
+    username: ${BOOTSTRAP_ADMIN_USERNAME:}
+    password: ${BOOTSTRAP_ADMIN_PASSWORD:}
+    house-name: ${BOOTSTRAP_ADMIN_HOUSE_NAME:Admin House}
+    exit-after-run: ${BOOTSTRAP_ADMIN_EXIT_AFTER_RUN:true}

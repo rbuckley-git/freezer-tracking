@@ -1,0 +1,32 @@
+# Default region is eu-west-2; set aws_region only if you need to override it.
+# api_image_tag and web_image_tag select tags from Terraform-managed ECR repositories.
+
+# Optional overrides
+# project_name        = "freezer-tracking"
+# root_domain         = "example.com"
+# web_subdomain       = "freezer"
+# api_subdomain       = "freezer-api"
+# ec2_instance_type   = "t4g.small"
+# db_serverless_min_acu = 0.5
+# db_serverless_max_acu = 2
+# enable_rds_instance = true
+# enable_rds_cluster = true
+# api_health_check_path = "/actuator/health"
+# web_health_check_path = "/"
+# enable_https_only_listeners = true # deprecated, retained for compatibility
+# alb_https_security_policy = "ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09"
+# enable_alb_waf      = true
+# waf_rate_limit_per_5m = 2000
+# ecr_housekeeping_schedule_expression = "rate(1 day)"
+# ecr_housekeeping_keep_unreferenced = 2
+# ecr_housekeeping_dry_run = false
+# ecr_housekeeping_log_level = "INFO"
+# api_container_memory_reservation = 256
+# web_container_memory_reservation = 256
+# web_api_base_url    = "http://example.internal:8080"
+# postgres_ec2_instance_type = "t4g.small"
+# postgres_ec2_data_volume_size_gb = 100
+# postgres_ec2_data_volume_type = "gp3"
+# postgres_ec2_allowed_cidrs = []
+# api_image_tag       = "latest"
+# web_image_tag       = "latest"

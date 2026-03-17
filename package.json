@@ -1,0 +1,22 @@
+{
+  "name": "freezer-tracking",
+  "version": "3.0.0",
+  "private": true,
+  "scripts": {
+    "web:dev": "dotenv -e .env.web -- npm --prefix apps/web run dev",
+    "web:start": "dotenv -e .env.web -- npm --prefix apps/web run start",
+    "web:test:all": "npm --prefix apps/web run test:all",
+    "api:run": "dotenv -e .env.api -- ./apps/api/gradlew -p apps/api bootRun",
+    "api:test": "dotenv -e .env.api -- ./apps/api/gradlew -p apps/api test",
+    "db:reset": "podman exec -i freezer-tracking-db-1 psql -U freezer_tracking -d freezer_tracking -c \"DROP SCHEMA public CASCADE; CREATE SCHEMA public;\"",
+    "dev": "concurrently -k -n web,api -c \"cyan,green\" \"dotenv -e .env.web -- npm --prefix apps/web run dev\" \"dotenv -e .env.api -- ./apps/api/gradlew -p apps/api bootRun\"",
+    "start": "concurrently -k -n web,api -c \"cyan,green\" \"dotenv -e .env.web -- npm --prefix apps/web run start\" \"dotenv -e .env.api -- ./apps/api/gradlew -p apps/api bootRun\"",
+    "interface:lint": "spectral lint --ruleset interface/.spectral.yaml interface/openapi.yaml",
+    "lint:interface": "npm run interface:lint"
+  },
+  "devDependencies": {
+    "@stoplight/spectral-cli": "^6.15.0",
+    "concurrently": "8.2.2",
+    "dotenv-cli": "^11.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+# Dependencies and build output
+node_modules/
+.next/
+
+# Test output and coverage
+coverage/
+
+# Local environment and tooling files
+.env*
+.DS_Store
+
+# VCS and editor noise
+.git/
+.gitignore

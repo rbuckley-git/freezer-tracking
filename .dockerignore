@@ -1,0 +1,19 @@
+# Keep root-context builds small: include only API/web sources and certs.
+*
+!apps/
+!apps/api/
+!apps/api/**
+!apps/web/
+!apps/web/**
+!certs/
+!certs/**
+
+# Exclude generated API artefacts from the allowed subtree.
+apps/api/.gradle/
+apps/api/build/
+apps/api/bin/
+
+# Exclude generated web artefacts from the allowed subtree.
+apps/web/node_modules/
+apps/web/.next/
+apps/web/coverage/

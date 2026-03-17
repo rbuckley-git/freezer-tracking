@@ -1,0 +1,384 @@
+---
+databaseChangeLog:
+  - changeSet:
+      id: 001-initial-schema
+      author: codex
+      changes:
+        - createTable:
+            tableName: houses
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: houses
+            columnNames: name
+            constraintName: uq_houses_name
+
+        - createTable:
+            tableName: accounts
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password_hash
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password_salt
+                  type: varchar(32)
+              - column:
+                  name: failed_login_count
+                  type: integer
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lockout_until
+                  type: timestamp
+              - column:
+                  name: is_admin
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: house_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: accounts
+            columnNames: username
+            constraintName: uq_accounts_username
+        - addForeignKeyConstraint:
+            baseTableName: accounts
+            baseColumnNames: house_id
+            referencedTableName: houses
+            referencedColumnNames: id
+            constraintName: fk_accounts_house
+
+        - createTable:
+            tableName: config
+            columns:
+              - column:
+                  name: config_key
+                  type: varchar(64)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: config_value
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - insert:
+            tableName: config
+            columns:
+              - column:
+                  name: config_key
+                  value: api_key_expiry_days
+              - column:
+                  name: config_value
+                  value: "30"
+
+        - createTable:
+            tableName: freezers
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: shelf_count
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: house_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: freezers
+            columnNames: house_id, name
+            constraintName: uq_freezers_house_name
+        - addForeignKeyConstraint:
+            baseTableName: freezers
+            baseColumnNames: house_id
+            referencedTableName: houses
+            referencedColumnNames: id
+            constraintName: fk_freezers_house
+
+        - createTable:
+            tableName: items
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: reference
+                  type: varchar(8)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: freeze_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: best_before
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: freezer_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: shelf_number
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: house_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: items
+            columnNames: house_id, reference
+            constraintName: uq_items_house_reference
+        - addForeignKeyConstraint:
+            baseTableName: items
+            baseColumnNames: house_id
+            referencedTableName: houses
+            referencedColumnNames: id
+            constraintName: fk_items_house
+        - addForeignKeyConstraint:
+            baseTableName: items
+            baseColumnNames: house_id, freezer_name
+            referencedTableName: freezers
+            referencedColumnNames: house_id, name
+            constraintName: fk_items_freezer_house_name
+        - sql:
+            dbms: postgresql
+            sql: "ALTER TABLE items ADD CONSTRAINT chk_items_reference_8_digits CHECK (reference ~ '^[0-9]{8}$')"
+        - sql:
+            dbms: h2
+            sql: "ALTER TABLE items ADD CONSTRAINT chk_items_reference_8_digits CHECK (reference REGEXP '^[0-9]{8}$')"
+
+        - createTable:
+            tableName: account_api_keys
+            columns:
+              - column:
+                  name: api_key
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: account_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expires_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_used_at
+                  type: timestamp
+              - column:
+                  name: revoked_at
+                  type: timestamp
+              - column:
+                  name: device_label
+                  type: varchar(100)
+        - addUniqueConstraint:
+            tableName: account_api_keys
+            columnNames: api_key
+            constraintName: uq_account_api_keys_api_key
+        - addForeignKeyConstraint:
+            baseTableName: account_api_keys
+            baseColumnNames: account_id
+            referencedTableName: accounts
+            referencedColumnNames: id
+            constraintName: fk_account_api_keys_account
+
+  - changeSet:
+      id: 003-items-freezer-id
+      author: codex
+      changes:
+        - addColumn:
+            tableName: items
+            columns:
+              - column:
+                  name: freezer_id
+                  type: int
+        - sql:
+            dbms: postgresql
+            sql: |
+              UPDATE items
+              SET freezer_id = (
+                SELECT id
+                FROM freezers
+                WHERE freezers.house_id = items.house_id
+                  AND freezers.name = items.freezer_name
+              )
+        - sql:
+            dbms: h2
+            sql: |
+              UPDATE items
+              SET freezer_id = (
+                SELECT id
+                FROM freezers
+                WHERE freezers.house_id = items.house_id
+                  AND freezers.name = items.freezer_name
+              )
+        - addNotNullConstraint:
+            tableName: items
+            columnName: freezer_id
+            columnDataType: int
+        - dropForeignKeyConstraint:
+            baseTableName: items
+            constraintName: fk_items_freezer_house_name
+        - dropColumn:
+            tableName: items
+            columnName: freezer_name
+        - addForeignKeyConstraint:
+            baseTableName: items
+            baseColumnNames: freezer_id
+            referencedTableName: freezers
+            referencedColumnNames: id
+            constraintName: fk_items_freezer_id
+
+  - changeSet:
+      id: 004-super-admin-role
+      author: codex
+      changes:
+        - addColumn:
+            tableName: accounts
+            columns:
+              - column:
+                  name: is_super_admin
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+        - sql:
+            sql: |
+              UPDATE accounts
+              SET is_super_admin = true
+              WHERE is_admin = true
+
+  - changeSet:
+      id: 005-account-api-key-hash
+      author: codex
+      changes:
+        - addColumn:
+            tableName: account_api_keys
+            columns:
+              - column:
+                  name: api_key_hash
+                  type: varchar(64)
+        - addUniqueConstraint:
+            tableName: account_api_keys
+            columnNames: api_key_hash
+            constraintName: uq_account_api_keys_api_key_hash
+        - createIndex:
+            tableName: account_api_keys
+            indexName: idx_account_api_keys_api_key_hash
+            columns:
+              - column:
+                  name: api_key_hash
+
+  - changeSet:
+      id: 006-items-weight-size
+      author: codex
+      changes:
+        - addColumn:
+            tableName: items
+            columns:
+              - column:
+                  name: weight
+                  type: varchar(8)
+              - column:
+                  name: size
+                  type: varchar(1)
+        - sql:
+            dbms: postgresql
+            sql: "ALTER TABLE items ADD CONSTRAINT chk_items_size_s_m_l CHECK (size IS NULL OR size IN ('S', 'M', 'L'))"
+        - sql:
+            dbms: h2
+            sql: "ALTER TABLE items ADD CONSTRAINT chk_items_size_s_m_l CHECK (size IS NULL OR size IN ('S', 'M', 'L'))"
+
+  - changeSet:
+      id: 007-account-api-key-client-type
+      author: codex
+      changes:
+        - addColumn:
+            tableName: account_api_keys
+            columns:
+              - column:
+                  name: client_type
+                  type: varchar(16)
+                  defaultValue: LEGACY
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: account_api_keys
+            indexName: idx_account_api_keys_account_client_type
+            columns:
+              - column:
+                  name: account_id
+              - column:
+                  name: client_type
+        - sql:
+            sql: |
+              UPDATE account_api_keys
+              SET revoked_at = CURRENT_TIMESTAMP,
+                  expires_at = CURRENT_TIMESTAMP
+              WHERE revoked_at IS NULL
+                AND expires_at > CURRENT_TIMESTAMP

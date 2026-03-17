@@ -1,0 +1,5 @@
+region         = "eu-west-2"
+bucket         = "replace-with-bootstrap-output"
+key            = "freezer-tracking/terraform.tfstate"
+encrypt        = true
+use_lockfile   = true
