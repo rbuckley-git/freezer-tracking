@@ -110,7 +110,7 @@ test('proxy redirects protected routes to /login when unauthenticated', async (t
   assert.ok(location?.startsWith('/login'), `expected redirect to /login, got ${location}`);
 });
 
-test('proxy redirects all app pages (except /login) to /login when unauthenticated', async (t) => {
+test('proxy redirects protected app pages to /login when unauthenticated', async (t) => {
   const port = randomPort();
   const child = await startProductionServer(port);
 
@@ -142,5 +142,23 @@ test('proxy redirects all app pages (except /login) to /login when unauthenticat
     const location = response.headers.get('location');
     assert.ok([307, 308].includes(response.status), `expected redirect for ${path}, got ${response.status}`);
     assert.ok(location?.startsWith('/login'), `expected redirect to /login for ${path}, got ${location}`);
+  }
+});
+
+test('proxy allows public privacy and support pages when unauthenticated', async (t) => {
+  const port = randomPort();
+  const child = await startProductionServer(port);
+
+  t.after(() => {
+    if (!child.killed) {
+      child.kill('SIGTERM');
+    }
+  });
+
+  await waitForServer(`http://127.0.0.1:${port}/login`);
+
+  for (const path of ['/privacy', '/support']) {
+    const response = await fetchNoRedirect(`http://127.0.0.1:${port}${path}`);
+    assert.equal(response.status, 200, `expected public access for ${path}, got ${response.status}`);
   }
 });

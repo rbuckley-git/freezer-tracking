@@ -31,11 +31,29 @@ body {
   flex: 1;
 }
 
+.app-footer {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  padding: 10px 16px 16px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.footer-links a {
+  color: var(--accent-strong);
+}
+
 .app-version {
   text-align: center;
   font-size: 0.75rem;
   color: var(--muted);
-  padding: 10px 16px 16px;
 }
 
 a {
@@ -62,6 +80,10 @@ h1 {
 p {
   color: var(--muted);
   margin: 0 0 16px;
+}
+
+.legal-copy {
+  max-width: 760px;
 }
 
 .card {

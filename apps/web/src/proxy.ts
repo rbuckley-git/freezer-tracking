@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const COOKIE_NAME = 'ft_api';
+const PUBLIC_PATH_PREFIXES = ['/login', '/privacy', '/support'];
 
 function isLocalHostname(hostname: string) {
   return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
@@ -96,7 +97,7 @@ export function proxy(request: NextRequest) {
     response.headers.set('x-nonce', nonce);
   }
 
-  if (pathname.startsWith('/login')) {
+  if (PUBLIC_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
     return response;
   }
 
