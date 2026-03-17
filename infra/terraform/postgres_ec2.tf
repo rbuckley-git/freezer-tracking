@@ -143,6 +143,10 @@ resource "aws_instance" "postgres_ec2" {
     volume_type           = "gp3"
     encrypted             = true
     delete_on_termination = true
+
+    tags = {
+      Name = "${var.project_name}-postgres-root"
+    }
   }
 
   user_data = <<-EOT

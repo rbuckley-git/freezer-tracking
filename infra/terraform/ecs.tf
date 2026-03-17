@@ -147,6 +147,14 @@ resource "aws_launch_template" "ecs" {
       Name = "${var.project_name}-ecs-host"
     }
   }
+
+  tag_specifications {
+    resource_type = "volume"
+
+    tags = {
+      Name = "${var.project_name}-ecs-host-root"
+    }
+  }
 }
 
 resource "aws_autoscaling_group" "ecs" {
