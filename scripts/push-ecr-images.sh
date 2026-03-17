@@ -3,10 +3,38 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+FORCE_PUSH=false
 
 TERRAFORM_DIR="${TERRAFORM_DIR:-${REPO_ROOT}/infra/terraform}"
 API_LOCAL_IMAGE="${API_LOCAL_IMAGE:-freezer-tracking-api}"
 WEB_LOCAL_IMAGE="${WEB_LOCAL_IMAGE:-freezer-tracking-web}"
+
+usage() {
+  cat <<'EOF'
+Usage: scripts/push-ecr-images.sh [--force]
+
+Options:
+  --force  Push API and web images even when versions are unchanged from HEAD~1.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --force)
+      FORCE_PUSH=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
 
 read_version() {
   local file="$1"
@@ -37,17 +65,19 @@ WEB_IMAGE_TAG="${WEB_IMAGE_TAG:-${IMAGE_TAG:-${web_version}}}"
 should_push_api=true
 should_push_web=true
 
-if [[ -n "${previous_api_version}" && "${previous_api_version}" == "${api_version}" ]]; then
-  should_push_api=false
-fi
+if [[ "${FORCE_PUSH}" == "false" ]]; then
+  if [[ -n "${previous_api_version}" && "${previous_api_version}" == "${api_version}" ]]; then
+    should_push_api=false
+  fi
 
-if [[ -n "${previous_web_version}" && "${previous_web_version}" == "${web_version}" ]]; then
-  should_push_web=false
-fi
+  if [[ -n "${previous_web_version}" && "${previous_web_version}" == "${web_version}" ]]; then
+    should_push_web=false
+  fi
 
-if [[ "${should_push_api}" == "false" && "${should_push_web}" == "false" ]]; then
-  echo "No ECR pushes required. API/web versions are unchanged from HEAD~1."
-  exit 0
+  if [[ "${should_push_api}" == "false" && "${should_push_web}" == "false" ]]; then
+    echo "No ECR pushes required. API/web versions are unchanged from HEAD~1."
+    exit 0
+  fi
 fi
 
 require_cmd() {
@@ -101,6 +131,10 @@ fi
 
 api_target="${api_repo_url}:${API_IMAGE_TAG}"
 web_target="${web_repo_url}:${WEB_IMAGE_TAG}"
+
+if [[ "${FORCE_PUSH}" == "true" ]]; then
+  echo "Force pushing API and web images."
+fi
 
 if [[ "${should_push_api}" == "true" ]]; then
   echo "Tagging ${API_LOCAL_IMAGE}:${API_LOCAL_TAG} -> ${api_target}"
