@@ -10,7 +10,39 @@ struct APIClient {
     }
 
     func listItems() async throws -> ItemList {
-        return try await request(path: "/items?page=0&size=100")
+        return try await listItems(page: 0, size: 100)
+    }
+
+    func listItems(page: Int, size: Int) async throws -> ItemList {
+        return try await request(path: "/items?page=\(page)&size=\(size)")
+    }
+
+    func listAllItems(pageSize: Int = 100) async throws -> [Item] {
+        var page = 0
+        var items: [Item] = []
+
+        while true {
+            let response = try await listItems(page: page, size: pageSize)
+            items.append(contentsOf: response.items)
+            if page >= response.totalPages - 1 {
+                break
+            }
+            page += 1
+        }
+
+        return items
+    }
+
+    func createFreezer(_ payload: FreezerPayload) async throws -> Freezer {
+        return try await request(path: "/freezers", method: "POST", body: payload)
+    }
+
+    func updateFreezer(id: Int, payload: FreezerPayload) async throws -> Freezer {
+        return try await request(path: "/freezers/\(id)", method: "PUT", body: payload)
+    }
+
+    func deleteFreezer(id: Int) async throws {
+        let _: EmptyResponse = try await request(path: "/freezers/\(id)", method: "DELETE")
     }
 
     func createItem(_ payload: ItemCreatePayload) async throws -> Item {
@@ -82,6 +114,11 @@ struct ItemCreatePayload: Encodable {
     let shelfNumber: Int
     let weight: String?
     let size: String?
+}
+
+struct FreezerPayload: Encodable {
+    let name: String
+    let shelfCount: Int
 }
 
 struct ApiError: Decodable {

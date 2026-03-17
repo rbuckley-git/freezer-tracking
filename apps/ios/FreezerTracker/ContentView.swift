@@ -166,6 +166,7 @@ struct ContentView: View {
 
     @AppStorage("apiKey") private var apiKey: String = ""
     @AppStorage("apiKeyExpiry") private var apiKeyExpiry: String = ""
+    @AppStorage("isAdmin") private var isAdmin: Bool = false
 
     private var isSignedIn: Bool {
         guard let expiryDate = parseApiKeyExpiry(apiKeyExpiry) else {
@@ -326,7 +327,7 @@ struct ContentView: View {
             .tag(1)
 
             NavigationView {
-                SettingsView()
+                SettingsView(appState: state)
             }
             .tabItem {
                 Label("Settings", systemImage: "gearshape")
@@ -388,11 +389,13 @@ struct ContentView: View {
         guard let expiryDate = parseApiKeyExpiry(apiKeyExpiry) else {
             apiKey = ""
             apiKeyExpiry = ""
+            isAdmin = false
             return
         }
         if expiryDate <= now {
             apiKey = ""
             apiKeyExpiry = ""
+            isAdmin = false
         }
     }
 

@@ -15,6 +15,7 @@
 		72F0952FE10C57C2486375E8 /* Freezer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085ECCB673A86190B3592B2B /* Freezer.swift */; };
 		7900603C040F1CF7EE340E5F /* AppIcon.svg in Resources */ = {isa = PBXBuildFile; fileRef = 7F1FF69CB58D132A76A667A4 /* AppIcon.svg */; };
 		7DE06A9E64A67C4C7F5BD776 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D6FB3315E7D97FE7C0F621 /* SettingsView.swift */; };
+		8B4AC25B2F69BEA200728B34 /* FreezerSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4AC25A2F69BEA200728B34 /* FreezerSetupView.swift */; };
 		8B4EB4112F37D39700CD7B32 /* FreezerRadioGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4EB4102F37D39700CD7B32 /* FreezerRadioGroup.swift */; };
 		8B4EB4142F37F1FA00CD7B32 /* DatePickerField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4EB4132F37F1FA00CD7B32 /* DatePickerField.swift */; };
 		8B5F7FD82F3914470066AE5D /* AuthUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F7FD72F3914470066AE5D /* AuthUtils.swift */; };
@@ -36,6 +37,7 @@
 		5F113E2B61E62C374A1014A4 /* FreezerTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreezerTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F1FF69CB58D132A76A667A4 /* AppIcon.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppIcon.svg; sourceTree = "<group>"; };
 		817471A77B8B3956E7CC1214 /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
+		8B4AC25A2F69BEA200728B34 /* FreezerSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreezerSetupView.swift; sourceTree = "<group>"; };
 		8B4EB4102F37D39700CD7B32 /* FreezerRadioGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreezerRadioGroup.swift; sourceTree = "<group>"; };
 		8B4EB4132F37F1FA00CD7B32 /* DatePickerField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerField.swift; sourceTree = "<group>"; };
 		8B5F7FD72F3914470066AE5D /* AuthUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUtils.swift; sourceTree = "<group>"; };
@@ -50,6 +52,7 @@
 		1A8A738FB801212A93524264 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8B4AC25A2F69BEA200728B34 /* FreezerSetupView.swift */,
 				8B5F7FD92F3924420066AE5D /* LineSlider.swift */,
 				817471A77B8B3956E7CC1214 /* ItemDetailView.swift */,
 				8B4EB4102F37D39700CD7B32 /* FreezerRadioGroup.swift */,
@@ -192,6 +195,7 @@
 				72F0952FE10C57C2486375E8 /* Freezer.swift in Sources */,
 				F9FCFEB5CF0E3410F1022541 /* FreezerTrackerApp.swift in Sources */,
 				3C33EAAA2658A0A60C0CD3B9 /* Item.swift in Sources */,
+				8B4AC25B2F69BEA200728B34 /* FreezerSetupView.swift in Sources */,
 				4866FE2C6EFD292D55684037 /* ItemDetailView.swift in Sources */,
 				8B4EB4112F37D39700CD7B32 /* FreezerRadioGroup.swift in Sources */,
 				26E8910FF9C2D12F904FC4B1 /* ItemFormView.swift in Sources */,

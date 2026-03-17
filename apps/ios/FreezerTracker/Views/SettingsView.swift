@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @ObservedObject var appState: AppState
+
 #if DEBUG
     @AppStorage("apiBaseUrl") private var apiBaseUrl: String = "https://freezer-api.learnsharegrow.io"
 #else
@@ -9,6 +11,7 @@ struct SettingsView: View {
     @AppStorage("apiKey") private var apiKey: String = ""
     @AppStorage("apiKeyExpiry") private var apiKeyExpiry: String = ""
     @AppStorage("username") private var storedUsername: String = ""
+    @AppStorage("isAdmin") private var isAdmin: Bool = false
 
     @State private var username = ""
     @State private var password = ""
@@ -100,10 +103,23 @@ struct SettingsView: View {
                                 apiKey = ""
                                 apiKeyExpiry = ""
                                 storedUsername = ""
+                                isAdmin = false
+                                appState.reset()
+                                appState.freezers = []
+                                appState.items = []
+                                appState.item = nil
                             }
                             .buttonStyle(.borderedProminent)
                             .tint(.red)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+
+                    if isSignedIn && isAdmin {
+                        Section("Administration") {
+                            NavigationLink("Setup freezers") {
+                                FreezerSetupView(appState: appState)
+                            }
                         }
                     }
 
@@ -166,6 +182,7 @@ struct SettingsView: View {
             apiKey = response.apiKey
             apiKeyExpiry = response.apiKeyExpiry
             storedUsername = username
+            isAdmin = response.isAdmin
             password = ""
             loginMessage = "Signed in."
         } catch {
@@ -182,11 +199,13 @@ struct SettingsView: View {
         guard let expiryDate else {
             apiKey = ""
             apiKeyExpiry = ""
+            isAdmin = false
             return
         }
         if expiryDate <= Date() {
             apiKey = ""
             apiKeyExpiry = ""
+            isAdmin = false
         }
     }
 
