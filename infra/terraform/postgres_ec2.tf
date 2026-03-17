@@ -61,7 +61,68 @@ resource "aws_ebs_volume" "postgres_data" {
   }
 
   tags = {
-    Name = "${var.project_name}-postgres-data"
+    Name   = "${var.project_name}-postgres-data"
+    Backup = "Yes"
+  }
+}
+
+resource "aws_iam_role" "postgres_data_snapshot_lifecycle" {
+  name = "${var.project_name}-postgres-data-snapshot-lifecycle-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "dlm.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "postgres_data_snapshot_lifecycle" {
+  role       = aws_iam_role.postgres_data_snapshot_lifecycle.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSDataLifecycleManagerServiceRole"
+}
+
+resource "aws_dlm_lifecycle_policy" "postgres_data_daily_snapshots" {
+  description        = "Daily snapshots for the PostgreSQL EC2 data volume"
+  execution_role_arn = aws_iam_role.postgres_data_snapshot_lifecycle.arn
+  state              = "ENABLED"
+
+  policy_details {
+    resource_types = ["VOLUME"]
+    target_tags = {
+      Backup = "Yes"
+    }
+
+    schedule {
+      name = "Daily PostgreSQL data snapshots"
+
+      create_rule {
+        interval      = 24
+        interval_unit = "HOURS"
+        times         = [var.postgres_ec2_snapshot_time_utc]
+      }
+
+      retain_rule {
+        count = var.postgres_ec2_snapshot_retention_count
+      }
+
+      copy_tags = true
+
+      tags_to_add = {
+        Name      = "${var.project_name}-postgres-data-snapshot"
+        ManagedBy = "terraform"
+      }
+    }
+  }
+
+  tags = {
+    Name = "${var.project_name}-postgres-data-daily-snapshots"
   }
 }
 

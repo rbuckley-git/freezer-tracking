@@ -278,3 +278,15 @@ variable "postgres_ec2_allowed_cidrs" {
   type        = list(string)
   default     = []
 }
+
+variable "postgres_ec2_snapshot_time_utc" {
+  description = "UTC time in HH:MM format when the daily PostgreSQL data volume snapshot is created."
+  type        = string
+  default     = "03:00"
+}
+
+variable "postgres_ec2_snapshot_retention_count" {
+  description = "Number of daily PostgreSQL data volume snapshots to retain."
+  type        = number
+  default     = 3
+}

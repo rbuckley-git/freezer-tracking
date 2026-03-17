@@ -28,5 +28,7 @@
 # postgres_ec2_data_volume_size_gb = 100
 # postgres_ec2_data_volume_type = "gp3"
 # postgres_ec2_allowed_cidrs = []
+# postgres_ec2_snapshot_time_utc = "03:00"
+# postgres_ec2_snapshot_retention_count = 3
 # api_image_tag       = "latest"
 # web_image_tag       = "latest"
