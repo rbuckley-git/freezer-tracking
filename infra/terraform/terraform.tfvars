@@ -13,6 +13,6 @@ enable_https_only_listeners = true
 # alb_https_security_policy = "ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09"
 web_api_base_url    = "https://freezer-api.learnsharegrow.io"
 api_image_tag       = "3.0.0"
-web_image_tag       = "3.0.0"
+web_image_tag       = "3.1.0"
 enable_rds_instance = false
 enable_rds_cluster  = false
