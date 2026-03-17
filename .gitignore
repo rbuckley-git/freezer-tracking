@@ -50,6 +50,7 @@ DerivedData/
 *.xcodeproj/project.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
 *.xcworkspace/xcuserdata/
+apps/ios/FreezerTracker.xcodeproj/xcuserdata/
 *.ipa
 *.dSYM
 
