@@ -95,7 +95,7 @@ struct SettingsView: View {
                         }
                         .padding(.vertical, 6)
 
-                        if let expiryDate, isSignedIn {
+                        if isSignedIn {
                             Button("Sign out") {
                                 apiKey = ""
                                 apiKeyExpiry = ""
