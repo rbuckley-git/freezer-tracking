@@ -1,0 +1,80 @@
+version: "3.9"
+
+services:
+  db:
+    image: ${DB_IMAGE:-postgres:16}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-freezer_tracking}
+      POSTGRES_USER: ${POSTGRES_USER:-freezer_tracking}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    ports:
+      - target: 5432
+        published: ${DB_PUBLISHED_PORT:-5434}
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - freezer-postgres-data:/var/lib/postgresql/data
+    networks:
+      - freezer-tracking
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      update_config:
+        order: stop-first
+      placement:
+        constraints:
+          - node.role == manager
+
+  api:
+    image: ${API_IMAGE:?API_IMAGE is required}
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-jdbc:postgresql://db:5432/freezer_tracking}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-freezer_tracking}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD is required}
+      PASSWORD_PEPPER: ${PASSWORD_PEPPER:?PASSWORD_PEPPER is required}
+      BOOTSTRAP_ADMIN_ENABLED: ${BOOTSTRAP_ADMIN_ENABLED:-false}
+      BOOTSTRAP_ADMIN_USERNAME: ${BOOTSTRAP_ADMIN_USERNAME:-}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+      BOOTSTRAP_ADMIN_HOUSE_NAME: ${BOOTSTRAP_ADMIN_HOUSE_NAME:-Admin House}
+      BOOTSTRAP_ADMIN_EXIT_AFTER_RUN: ${BOOTSTRAP_ADMIN_EXIT_AFTER_RUN:-true}
+    ports:
+      - target: 9080
+        published: ${API_PUBLISHED_PORT:-9080}
+        protocol: tcp
+        mode: ingress
+    networks:
+      - freezer-tracking
+    deploy:
+      replicas: ${API_REPLICAS:-1}
+      restart_policy:
+        condition: any
+      update_config:
+        order: start-first
+
+  web:
+    image: ${WEB_IMAGE:?WEB_IMAGE is required}
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-http://api:9080}
+      COOKIE_KEY: ${COOKIE_KEY:?COOKIE_KEY is required}
+      PORT: ${WEB_PORT:-10000}
+    ports:
+      - target: 10000
+        published: ${WEB_PUBLISHED_PORT:-10000}
+        protocol: tcp
+        mode: ingress
+    networks:
+      - freezer-tracking
+    deploy:
+      replicas: ${WEB_REPLICAS:-1}
+      restart_policy:
+        condition: any
+      update_config:
+        order: start-first
+
+networks:
+  freezer-tracking:
+    driver: overlay
+
+volumes:
+  freezer-postgres-data:
