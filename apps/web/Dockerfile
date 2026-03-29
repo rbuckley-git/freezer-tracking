@@ -6,7 +6,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/zscaler.crt
-ENV NPM_CONFIG_CAFILE=/usr/local/share/ca-certificates/zscaler.crt
 ENV NPM_CONFIG_CACHE=/root/.npm
 COPY apps/web/package.json apps/web/package-lock.json* ./
 RUN --mount=type=cache,target=/root/.npm npm ci --no-audit
