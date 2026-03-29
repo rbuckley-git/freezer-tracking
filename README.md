@@ -69,6 +69,7 @@ All tests:
 Compose:
 - `podman compose up -d`
 - `podman compose up -d --build`
+- `IMAGE_PLATFORM=linux/amd64 podman compose up -d --build` — optional x86_64 override when you need images for an x86 host instead of the default ARM images.
 
 Database:
 - `npm run db:reset` — drop and recreate the public schema in the Postgres container.
@@ -81,6 +82,7 @@ Bootstrap admin user:
 
 Production Compose:
 - `podman compose up -d --build` — builds and runs Postgres, API, and web app.
+- API and web image builds default to `linux/arm64`. Set `IMAGE_PLATFORM=linux/amd64` to build images that can run on x86_64 hosts.
 
 ECS hard bounce:
 - `scripts/ecs-bounce-services.sh` — scale API and web services down then up, waiting for each phase to complete.

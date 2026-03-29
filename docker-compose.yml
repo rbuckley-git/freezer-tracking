@@ -11,6 +11,7 @@ services:
       - freezer-postgres-data:/var/lib/postgresql/data
 
   api:
+    platform: ${IMAGE_PLATFORM:-linux/arm64}
     image: freezer-tracking-api:${API_LOCAL_TAG:-latest}
     build:
       context: .
@@ -27,6 +28,7 @@ services:
       - db
 
   web:
+    platform: ${IMAGE_PLATFORM:-linux/arm64}
     image: freezer-tracking-web:${WEB_LOCAL_TAG:-latest}
     build:
       context: .

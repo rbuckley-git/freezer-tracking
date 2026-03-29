@@ -102,9 +102,11 @@ ECR repository policies are managed automatically and allow pulls for the Terraf
 After `terraform apply`, use the ECR output URLs to push images:
 
 ```bash
-IMAGE_PLATFORM=linux/arm64 ./scripts/build-images.sh
+./scripts/build-images.sh
 ./scripts/push-ecr-images.sh
 ```
+
+`./scripts/build-images.sh` defaults to `linux/arm64`. Set `IMAGE_PLATFORM=linux/amd64` if you need API and web images that can run on x86_64 hosts instead.
 
 If you prefer manual tagging/pushing:
 
