@@ -57,6 +57,7 @@ Frontend (runs on port 10000):
 - `npm --prefix apps/web run assets`
 
 Backend:
+- `npm run api:build`
 - `./apps/api/gradlew bootRun`
 - `./apps/api/gradlew test`
 

@@ -6,6 +6,7 @@
     "web:dev": "dotenv -e .env.web -- npm --prefix apps/web run dev",
     "web:start": "dotenv -e .env.web -- npm --prefix apps/web run start",
     "web:test:all": "npm --prefix apps/web run test:all",
+    "api:build": "dotenv -e .env.api -- ./apps/api/gradlew -p apps/api build",
     "api:run": "dotenv -e .env.api -- ./apps/api/gradlew -p apps/api bootRun",
     "api:test": "dotenv -e .env.api -- ./apps/api/gradlew -p apps/api test",
     "db:reset": "podman exec -i freezer-tracking-db-1 psql -U freezer_tracking -d freezer_tracking -c \"DROP SCHEMA public CASCADE; CREATE SCHEMA public;\"",
